@@ -2,9 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const section = document.querySelector('#reviews');
   if (!section) return;
 
-  // Ensure UL container we control
+  // Ensure a UL we control
   let ul = section.querySelector('ul.list-unstyled');
-  if (!ul) { ul = document.createElement('ul'); ul.className='list-unstyled'; section.appendChild(ul); }
+  if (!ul) {
+    ul = document.createElement('ul');
+    ul.className = 'list-unstyled';
+    section.appendChild(ul);
+  }
 
   // Ensure a "Show all" button
   let toggleBtn = Array.from(section.querySelectorAll('[data-reviews-toggle],button,a'))
@@ -18,49 +22,66 @@ document.addEventListener('DOMContentLoaded', () => {
     section.appendChild(toggleBtn);
   }
 
-  const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  const stars = n => '★'.repeat(+n||0)+'☆'.repeat(Math.max(0,5-(+n||0)));
+  const stars = n => {
+    const v = Math.max(0, Math.min(5, Number(n)||0));
+    return '★'.repeat(v) + '☆'.repeat(5 - v);
+  };
+  const loading = (msg='Loading reviews…') => {
+    ul.innerHTML = ''; const li = document.createElement('li');
+    li.className='text-muted'; li.textContent = msg; ul.appendChild(li);
+  };
+  const error = (msg="Couldn't load reviews.") => {
+    ul.innerHTML = ''; const li = document.createElement('li');
+    li.className='text-danger'; li.textContent = msg; ul.appendChild(li);
+  };
 
-  function showLoading(){ ul.innerHTML=''; const li=document.createElement('li'); li.className='text-muted'; li.textContent='Loading reviews…'; ul.appendChild(li); }
-  function showError(){ ul.innerHTML=''; const li=document.createElement('li'); li.className='text-danger'; li.textContent="Couldn't load reviews. Please try again later."; ul.appendChild(li); }
-
-  function render(list, expanded){
+  function render(list, expanded=false){
     const INITIAL=3; ul.innerHTML='';
-    (expanded?list:list.slice(0,INITIAL)).forEach(r=>{
+    (expanded ? list : list.slice(0, INITIAL)).forEach(r=>{
       const li=document.createElement('li'); li.className='mb-3';
       const st=document.createElement('div'); st.style.color='#f59e0b'; st.style.letterSpacing='.1rem'; st.textContent=stars(r.rating);
-      const strong=document.createElement('strong'); strong.textContent=esc(r.name);
-      li.appendChild(st); li.appendChild(strong); li.append(' — ', esc(r.text)); ul.appendChild(li);
+      const strong=document.createElement('strong'); strong.textContent=String(r.name ?? '');
+      const dash=document.createTextNode(' — ');
+      const span=document.createElement('span'); span.textContent=String(r.text ?? '');
+      li.append(st, strong, dash, span); ul.appendChild(li);
     });
+    const needsToggle = list.length > INITIAL;
+    toggleBtn.style.display = needsToggle ? '' : 'none';
     toggleBtn.textContent = expanded ? 'Show less' : 'Show all';
-    toggleBtn.style.display = list.length>3 ? '' : 'none';
   }
 
-  function loadFromScript(){
-    return new Promise((resolve,reject)=>{
-      if (Array.isArray(window.SHARPENSWEET_REVIEWS)) return resolve(window.SHARPENSWEET_REVIEWS);
-      const s=document.createElement('script');
-      s.src='/js/reviews.data.js?v='+Date.now(); s.async=true;
-      s.onload=()=> Array.isArray(window.SHARPENSWEET_REVIEWS) ? resolve(window.SHARPENSWEET_REVIEWS) : reject(new Error('no global'));
-      s.onerror=()=>reject(new Error('script error'));
+  function loadFromGlobal(){
+    return Array.isArray(window.SHARPENSWEET_REVIEWS)
+      ? Promise.resolve(window.SHARPENSWEET_REVIEWS)
+      : Promise.reject('no global');
+  }
+  function loadByScript(){
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = '/js/reviews.data.js?v=' + Date.now();
+      s.async = true;
+      s.onload = () => Array.isArray(window.SHARPENSWEET_REVIEWS)
+        ? resolve(window.SHARPENSWEET_REVIEWS)
+        : reject('script loaded but no data');
+      s.onerror = () => reject('script error');
       document.head.appendChild(s);
     });
   }
-  async function loadData(){
-    try { return await loadFromScript(); }
-    catch(_){
-      const res=await fetch('/reviews.json?v='+Date.now(),{cache:'no-store',headers:{Accept:'application/json'}});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const json=await res.json(); window.SHARPENSWEET_REVIEWS=json; return json;
-    }
+  function loadByFetch(){
+    return fetch('/reviews.json?v=' + Date.now(), {cache:'no-store'})
+      .then(r => r.ok ? r.json() : Promise.reject('http '+r.status));
   }
 
-  showLoading();
-  let all=[]; let expanded=false;
-  loadData()
-    .then(list=>{ all=(Array.isArray(list)?list:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))); render(all,expanded); })
-    .catch(()=>showError());
-
-  toggleBtn.addEventListener('click', ()=>{ expanded=!expanded; render(all,expanded); });
+  loading();
+  Promise.resolve()
+    .then(loadFromGlobal)
+    .catch(loadByScript)
+    .catch(loadByFetch)
+    .then(list => {
+      if (!Array.isArray(list)) throw new Error('bad data');
+      const all = list.slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+      let expanded=false; render(all, expanded);
+      toggleBtn.onclick = () => { expanded=!expanded; render(all, expanded); };
+    })
+    .catch(() => error());
 });
