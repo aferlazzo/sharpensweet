@@ -10,3 +10,8 @@
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 </IfModule>
+# --- Reviews JSON: allow public read + proper type ---
+<Files "reviews.json">
+  Require all granted
+</Files>
+AddType application/json .json
