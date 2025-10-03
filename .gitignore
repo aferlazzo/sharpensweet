@@ -1,0 +1,17 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Build/vendor
+vendor/
+node_modules/
+
+# Site backups & scratch variants
+*.bak
+*.bak.*
+*.now.*
+*.offset.*
+*.norotate.*
+*.strip-nl.*
