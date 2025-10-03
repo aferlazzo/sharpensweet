@@ -15,3 +15,29 @@
   Require all granted
 </Files>
 AddType application/json .json
+# --- Fresh HTML every visit (mobile-friendly) ---
+<IfModule mod_headers.c>
+  <FilesMatch "\.html?$">
+    Header always set Cache-Control "no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </FilesMatch>
+
+  # These two JS files are under active development — revalidate them too
+  <FilesMatch "(^|/)(reviews\.js|nav-order\.js)$">
+    Header always set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+# --- Fresh HTML every visit (mobile-friendly) ---
+<IfModule mod_headers.c>
+  <FilesMatch "\.html?$">
+    Header always set Cache-Control "no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </FilesMatch>
+
+  # These two JS files are under active development — revalidate them too
+  <FilesMatch "(^|/)(reviews\.js|nav-order\.js)$">
+    Header always set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>

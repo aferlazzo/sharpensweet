@@ -1,97 +1,66 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const section = document.querySelector('#reviews');
   if (!section) return;
 
-  // Ensure a UL we control
+  // Ensure UL container we control
   let ul = section.querySelector('ul.list-unstyled');
-  if (!ul) {
-    ul = document.createElement('ul');
-    ul.className = 'list-unstyled';
-    section.appendChild(ul);
-  }
+  if (!ul) { ul = document.createElement('ul'); ul.className='list-unstyled'; section.appendChild(ul); }
 
-  // Add a "Show all" button if missing
+  // Ensure a "Show all" button
   let toggleBtn = Array.from(section.querySelectorAll('[data-reviews-toggle],button,a'))
-    .find(el => /show all/i.test(el.textContent || ''));
+    .find(el => /show all/i.test((el.textContent||'')));
   if (!toggleBtn) {
     toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
     toggleBtn.className = 'btn btn-primary btn-sm mt-2';
     toggleBtn.textContent = 'Show all';
-    toggleBtn.setAttribute('data-reviews-toggle', 'all');
+    toggleBtn.setAttribute('data-reviews-toggle','all');
     section.appendChild(toggleBtn);
   }
 
-  // Helpers
-  const esc = s => String(s ?? '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+  const stars = n => '★'.repeat(+n||0)+'☆'.repeat(Math.max(0,5-(+n||0)));
 
-  // Loading state
-  ul.innerHTML = '<li class="text-muted">Loading reviews…</li>';
+  function showLoading(){ ul.innerHTML=''; const li=document.createElement('li'); li.className='text-muted'; li.textContent='Loading reviews…'; ul.appendChild(li); }
+  function showError(){ ul.innerHTML=''; const li=document.createElement('li'); li.className='text-danger'; li.textContent="Couldn't load reviews. Please try again later."; ul.appendChild(li); }
 
-  // Load data from /js/reviews.data.js (avoids JSON 403). Fallback if import() fails.
-  async function loadData() {
-    if (!window.SHARPENSWEET_REVIEWS) {
-      try {
-        await import('/js/reviews.data.js?v=' + Date.now());
-      } catch {
-        await new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          s.src = '/js/reviews.data.js?v=' + Date.now();
-          s.onload = resolve;
-          s.onerror = reject;
-          document.head.appendChild(s);
-        });
-      }
-    }
-    return Array.isArray(window.SHARPENSWEET_REVIEWS) ? window.SHARPENSWEET_REVIEWS : [];
-  }
-
-  let all = [];
-  try {
-    all = await loadData();
-  } catch (err) {
-    console.error('[reviews] load failed:', err);
-    ul.innerHTML = '<li class="text-danger">Couldn’t load reviews. Please try again later.</li>';
-    toggleBtn.style.display = 'none';
-    return;
-  }
-
-  if (all.length === 0) {
-    ul.innerHTML = '<li class="text-muted">No reviews yet.</li>';
-    toggleBtn.style.display = 'none';
-    return;
-  }
-
-  // Newest first (YYYY-MM-DD lexicographic works)
-  all.sort((a,b) => String(b.date).localeCompare(String(a.date)));
-
-  const render = subset => {
-    ul.innerHTML = '';
-    subset.forEach(r => {
-      const n = Math.max(1, Math.min(5, Number(r.rating) || 0));
-      const li = document.createElement('li');
-      li.className = 'mb-3';
-      li.innerHTML = `
-        <div class="stars" aria-label="${n} out of 5 stars" style="color:#f59e0b;letter-spacing:.1rem;">
-          ${stars(n)}
-        </div>
-        <strong>${esc(r.name || 'Customer')}</strong>
-        — ${esc(r.text || '')}
-      `;
-      ul.appendChild(li);
+  function render(list, expanded){
+    const INITIAL=3; ul.innerHTML='';
+    (expanded?list:list.slice(0,INITIAL)).forEach(r=>{
+      const li=document.createElement('li'); li.className='mb-3';
+      const st=document.createElement('div'); st.style.color='#f59e0b'; st.style.letterSpacing='.1rem'; st.textContent=stars(r.rating);
+      const strong=document.createElement('strong'); strong.textContent=esc(r.name);
+      li.appendChild(st); li.appendChild(strong); li.append(' — ', esc(r.text)); ul.appendChild(li);
     });
-  };
-
-  let expanded = false;
-  const FIRST = 3;
-  render(all.slice(0, FIRST));
-
-  toggleBtn.addEventListener('click', () => {
-    expanded = !expanded;
-    render(expanded ? all : all.slice(0, FIRST));
     toggleBtn.textContent = expanded ? 'Show less' : 'Show all';
-  });
+    toggleBtn.style.display = list.length>3 ? '' : 'none';
+  }
+
+  function loadFromScript(){
+    return new Promise((resolve,reject)=>{
+      if (Array.isArray(window.SHARPENSWEET_REVIEWS)) return resolve(window.SHARPENSWEET_REVIEWS);
+      const s=document.createElement('script');
+      s.src='/js/reviews.data.js?v='+Date.now(); s.async=true;
+      s.onload=()=> Array.isArray(window.SHARPENSWEET_REVIEWS) ? resolve(window.SHARPENSWEET_REVIEWS) : reject(new Error('no global'));
+      s.onerror=()=>reject(new Error('script error'));
+      document.head.appendChild(s);
+    });
+  }
+  async function loadData(){
+    try { return await loadFromScript(); }
+    catch(_){
+      const res=await fetch('/reviews.json?v='+Date.now(),{cache:'no-store',headers:{Accept:'application/json'}});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const json=await res.json(); window.SHARPENSWEET_REVIEWS=json; return json;
+    }
+  }
+
+  showLoading();
+  let all=[]; let expanded=false;
+  loadData()
+    .then(list=>{ all=(Array.isArray(list)?list:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))); render(all,expanded); })
+    .catch(()=>showError());
+
+  toggleBtn.addEventListener('click', ()=>{ expanded=!expanded; render(all,expanded); });
 });
