@@ -28,5 +28,11 @@
     "rating": 5,
     "date": "2025-10-03",
     "text": "Same-day service and razor sharp. Will use again."
+  },
+  {
+    "name": "<Name>",
+    "rating": 5,
+    "date": "2025-10-03",
+    "text": "<Blurb>"
   }
 ]
