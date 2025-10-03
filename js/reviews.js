@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let all = [];
   try {
-    // Load data from JS bundle (avoids JSON 403) + cache-bust
+    // Load from the JS data bundle (avoids /reviews.json 403)
     await import('/js/reviews.data.js?v=' + Date.now());
     all = Array.isArray(window.SHARPENSWEET_REVIEWS) ? window.SHARPENSWEET_REVIEWS : [];
   } catch (err) {
@@ -58,8 +58,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const li = document.createElement('li');
       li.className = 'mb-3';
       li.innerHTML = `
-        <div class="stars" aria-label="${n} out of 5 stars"
-             style="color:#f59e0b;letter-spacing:.1rem;">${stars(n)}</div>
+        <div class="stars" aria-label="${n} out of 5 stars" style="color:#f59e0b;letter-spacing:.1rem;">
+          ${stars(n)}
+        </div>
         <strong>${esc(r.name || 'Customer')}</strong>
         — ${esc(r.text || '')}
       `;
