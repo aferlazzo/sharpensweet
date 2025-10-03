@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Newest first (YYYY-MM-DD sorts lexicographically)
+  // Newest first (YYYY-MM-DD lexicographic works)
   all.sort((a,b) => String(b.date).localeCompare(String(a.date)));
 
   const render = subset => {
