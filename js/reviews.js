@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const section = document.querySelector('#reviews');
   if (!section) return;
 
-  // UL we control
+  // Ensure a UL we control
   let ul = section.querySelector('ul.list-unstyled');
   if (!ul) {
     ul = document.createElement('ul');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     section.appendChild(ul);
   }
 
-  // "Show all" button (add if missing)
+  // Add a "Show all" button if missing
   let toggleBtn = Array.from(section.querySelectorAll('[data-reviews-toggle],button,a'))
     .find(el => /show all/i.test(el.textContent || ''));
   if (!toggleBtn) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Loading state
   ul.innerHTML = '<li class="text-muted">Loading reviews…</li>';
 
-  // Load data from JS bundle (avoids JSON 403). Fallback if import() fails.
+  // Load data from /js/reviews.data.js (avoids JSON 403). Fallback if import() fails.
   async function loadData() {
     if (!window.SHARPENSWEET_REVIEWS) {
       try {
@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
           s.src = '/js/reviews.data.js?v=' + Date.now();
-          s.onload = resolve; s.onerror = reject;
+          s.onload = resolve;
+          s.onerror = reject;
           document.head.appendChild(s);
         });
       }
@@ -64,10 +65,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Newest first
+  // Newest first (YYYY-MM-DD sorts lexicographically)
   all.sort((a,b) => String(b.date).localeCompare(String(a.date)));
 
-  const render = (subset) => {
+  const render = subset => {
     ul.innerHTML = '';
     subset.forEach(r => {
       const n = Math.max(1, Math.min(5, Number(r.rating) || 0));
