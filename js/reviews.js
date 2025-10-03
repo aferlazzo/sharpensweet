@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // "Show all" button (add if missing)
-  let toggleBtn = Array.from(section.querySelectorAll('button,a'))
+  let toggleBtn = Array.from(section.querySelectorAll('[data-reviews-toggle],button,a'))
     .find(el => /show all/i.test(el.textContent || ''));
   if (!toggleBtn) {
     toggleBtn = document.createElement('button');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let all = [];
   try {
-    // Load data from the JS bundle (avoids JSON 403) + cache-bust
+    // Load data from JS bundle (avoids JSON 403) + cache-bust
     await import('/js/reviews.data.js?v=' + Date.now());
     all = Array.isArray(window.SHARPENSWEET_REVIEWS) ? window.SHARPENSWEET_REVIEWS : [];
   } catch (err) {
