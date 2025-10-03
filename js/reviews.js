@@ -31,19 +31,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Loading state
   ul.innerHTML = '<li class="text-muted">Loading reviews…</li>';
 
+  // Load data from JS bundle (avoids JSON 403). Fallback if import() fails.
+  async function loadData() {
+    if (!window.SHARPENSWEET_REVIEWS) {
+      try {
+        await import('/js/reviews.data.js?v=' + Date.now());
+      } catch {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/js/reviews.data.js?v=' + Date.now();
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+    }
+    return Array.isArray(window.SHARPENSWEET_REVIEWS) ? window.SHARPENSWEET_REVIEWS : [];
+  }
+
   let all = [];
   try {
-    // Load from the JS data bundle (avoids /reviews.json 403)
-    await import('/js/reviews.data.js?v=' + Date.now());
-    all = Array.isArray(window.SHARPENSWEET_REVIEWS) ? window.SHARPENSWEET_REVIEWS : [];
+    all = await loadData();
   } catch (err) {
-    ul.innerHTML = `<li class="text-danger">Couldn’t load reviews. Please try again later.</li>`;
     console.error('[reviews] load failed:', err);
+    ul.innerHTML = '<li class="text-danger">Couldn’t load reviews. Please try again later.</li>';
+    toggleBtn.style.display = 'none';
     return;
   }
 
-  if (!Array.isArray(all) || all.length === 0) {
-    ul.innerHTML = `<li class="text-muted">No reviews yet.</li>`;
+  if (all.length === 0) {
+    ul.innerHTML = '<li class="text-muted">No reviews yet.</li>';
     toggleBtn.style.display = 'none';
     return;
   }
