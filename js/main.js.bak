@@ -1,0 +1,26 @@
+document.addEventListener('DOMContentLoaded', function () {
+  const menuBtn = document.querySelector('.mobile-menu-btn');
+  const menu = document.querySelector('.nav-menu');
+
+  if (menuBtn && menu) {
+    menuBtn.addEventListener('click', function () {
+      menu.classList.toggle('open');
+      menuBtn.classList.toggle('active');
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        menu.classList.remove('open');
+        menuBtn.classList.remove('active');
+        menu.style.maxHeight = 'none';
+      } else {
+        menu.style.maxHeight = null;
+      }
+    });
+
+    // Collapse the menu by default on small screens
+    if (window.innerWidth <= 768) {
+      menu.classList.remove('open');
+    }
+  }
+});
