@@ -1,0 +1,7 @@
+# backups & temps
+*.bak
+*.bak.*
+*.backup*
+index.html.bak*
+/tmp/
+/reviews.csv
