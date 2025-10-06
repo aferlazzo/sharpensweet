@@ -1,0 +1,39 @@
+window.SHARPENSWEET_REVIEWS = [
+  {
+    "name": "Mary L.",
+    "rating": 5,
+    "date": "2025-09-20",
+    "text": "Sharpen Sweet rescued my chef’s knife. Better than new."
+  },
+  {
+    "name": "Chris D.",
+    "rating": 5,
+    "date": "2025-09-05",
+    "text": "Fast turnaround and super even bevels. Highly recommended."
+  },
+  {
+    "name": "Alison K.",
+    "rating": 4,
+    "date": "2025-08-28",
+    "text": "Noticeably sharper. Wish I’d done this months ago."
+  },
+  {
+    "name": "Janet P.",
+    "rating": 5,
+    "date": "2025-10-03",
+    "text": "My knives glide through tomatoes again. Perfect."
+  },
+  {
+    "name": "Mike R.",
+    "rating": 5,
+    "date": "2025-10-03",
+    "text": "Same-day service and razor sharp. Will use again."
+  },
+  {
+    "name": "<Name>",
+    "rating": 5,
+    "date": "2025-10-03",
+    "text": "<Blurb>"
+  }
+]
+;
