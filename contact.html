@@ -46,7 +46,36 @@
     </div>
   </div>
 </nav>
-<main id="content" class="container py-5"> <h1 class="visually-hidden">Sharpen Sweet</h1></main> <footer class="bg-dark text-light mt-auto site-footer"> <div class="container py-4"> <div class="row g-3 align-items-center"> <div class="col-md"><a class="navbar-brand text-light" href="/">Sharpen Sweet</a> <div class="small opacity-75">© 2025 Sharpen Sweet. All rights reserved.</div> </div> <div class="col-md-auto"> <ul class="nav"> <li class="nav-item"><a class="nav-link px-2 text-light" href="/services.html">Services</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/process.html">Process</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/about.html">About</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/contact.html">Contact</a></li> </ul> </div> </div> </div> </footer> <script src="/assets/bootstrap.bundle.min.js?v=1759862829" crossorigin="anonymous"></script>
+<main class="container my-5">
+  <div id="ss-content"></div>
+</main>
+<script id="ss-section-loader">
+(function(){
+  var wanted="Contact";  // Services | Process | About | Contact
+  fetch("/index.html?v="+Date.now())
+    .then(function(r){return r.text()})
+    .then(function(html){
+      var doc=new DOMParser().parseFromString(html,"text/html");
+      var H=Array.from(doc.querySelectorAll("main h1, main h2, main h3"));
+      // find a heading that contains the word we want (case-insensitive)
+      var h=H.find(function(el){return el.textContent.trim().toLowerCase().includes(wanted.toLowerCase());});
+      var tgt=document.getElementById("ss-content");
+      if(!h||!tgt){tgt.innerHTML='<p class="text-danger">Content temporarily unavailable.</p>';return;}
+      var frag=document.createDocumentFragment(), node=h;
+      // clone the heading and following siblings until the next H1/H2/H3
+      while(node && (node===h || !/^H[1-3]$/.test(node.tagName))){
+        frag.appendChild(node.cloneNode(true));
+        node=node.nextElementSibling;
+      }
+      tgt.appendChild(frag);
+    })
+    .catch(function(){
+      var t=document.getElementById("ss-content");
+      if(t) t.innerHTML='<p class="text-danger">Content temporarily unavailable.</p>';
+    });
+})();
+</script>
+ <footer class="bg-dark text-light mt-auto site-footer"> <div class="container py-4"> <div class="row g-3 align-items-center"> <div class="col-md"><a class="navbar-brand text-light" href="/">Sharpen Sweet</a> <div class="small opacity-75">© 2025 Sharpen Sweet. All rights reserved.</div> </div> <div class="col-md-auto"> <ul class="nav"> <li class="nav-item"><a class="nav-link px-2 text-light" href="/services.html">Services</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/process.html">Process</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/about.html">About</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/contact.html">Contact</a></li> </ul> </div> </div> </div> </footer> <script src="/assets/bootstrap.bundle.min.js?v=1759862829" crossorigin="anonymous"></script>
 <script id="nav-active-js">
 document.addEventListener('DOMContentLoaded', () => {
   const links = document.querySelectorAll('.navbar-nav .nav-link');
