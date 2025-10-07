@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharpen Sweet</title>
+<style id="always-hamburger">/* Always Hamburger */
+ (min-width: 992px){
+  .navbar-expand-lg .navbar-collapse{display:none!important;}
+  .navbar-expand-lg .navbar-toggler{display:block!important;}
+}
+</style>
+  <link href="/assets/bootstrap.min.css?v=1759785669" rel="stylesheet">
+  <link href="/assets/always-hamburger.css" rel="stylesheet">
+  <script src="/assets/bootstrap.bundle.min.js?v=1759785669" crossorigin="anonymous"></script>
+  <script id="collapse-on-link">document.addEventListener("click",function(e){var link=e.target.closest(".navbar-collapse.show .nav-link");if(!link)return;var el=document.getElementById("navMenu");if(!el||typeof bootstrap==="undefined")return;new bootstrap.Collapse(el,{toggle:false}).hide();});</script>
+</head><body>
+
+<script src="/assets/bootstrap.bundle.min.js?v=1759785669" crossorigin="anonymous"></script>
+<script id="collapse-on-link">
+document.addEventListener("click",function(e){
+  var link = e.target.closest(".navbar-collapse.show .nav-link");
+  if(!link) return;
+  var el = document.getElementById("navMenu");
+  if(!el || typeof bootstrap === "undefined") return;
+  new bootstrap.Collapse(el,{toggle:false}).hide();
+});
+</script>
+</body>
+</html>

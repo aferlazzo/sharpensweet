@@ -1,0 +1,7 @@
+/* Force visible navbar + toggler icon */
+.navbar{background:#111!important}
+.navbar .navbar-brand,.navbar .nav-link{color:#fff!important}
+.navbar .nav-link:hover{color:#fff!important;opacity:.85}
+.navbar .navbar-toggler{border-color:rgba(255,255,255,.55)!important}
+.navbar .navbar-toggler-icon{width:1.5em;height:1.5em;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 30 30%22%3E%3Cpath stroke=%22rgba(255,255,255,1)%22 stroke-linecap=%22round%22 stroke-miterlimit=%2210%22 stroke-width=%222%22 d=%22M4 7h22M4 15h22M4 23h22%22/%3E%3C/svg%3E")!important}
+@media (max-width:991.98px){.navbar-collapse{display:none}.navbar-collapse.show{display:block!important}}

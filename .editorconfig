@@ -1,0 +1,11 @@
+root = true
+
+[*.{html,css,js}]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# Keep trailing spaces in Markdown for hard line breaks
+[*.md]
+trim_trailing_whitespace = false

@@ -5,3 +5,7 @@
 index.html.bak*
 /tmp/
 /reviews.csv
+
+# ensure backups are ignored
+*.bak
+*.bak.*

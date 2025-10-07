@@ -1,0 +1,2 @@
+/* nav fallback show */
+@media (max-width:991.98px){.navbar-collapse{display:none}.navbar-collapse.show{display:block!important}}

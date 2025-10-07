@@ -1,0 +1,10 @@
+doctype: html5
+force-output: yes
+tidy-mark: no
+wrap: 0
+# Let Tidy know these are block-level in HTML5
+new-blocklevel-tags: article,aside,figure,figcaption,footer,header,hgroup,main,nav,section
+# Let it know common inline ARIA-friendly tags too (stops the aria-current warning)
+new-inline-tags: time,mark,small,wbr
+
+new-attributes: aria-current
