@@ -51,6 +51,36 @@
 </main>
 <script id="ss-section-loader">
 (function(){
+  var wantedId="about", wantedText="About"; // fallback to text match
+  fetch("/index.html?v="+Date.now())
+    .then(function(r){return r.text()})
+    .then(function(html){
+      var doc=new DOMParser().parseFromString(html,"text/html");
+      var anchor=doc.getElementById(wantedId);
+      var h=anchor ? anchor.nextElementSibling : null;
+      if(!h){
+        // Fallback: find heading by text
+        var H=Array.from(doc.querySelectorAll("main h1, main h2, main h3"));
+        h = H.find(function(el){return el.textContent.trim().toLowerCase().includes(wantedText.toLowerCase());}) || null;
+      }
+      var tgt=document.getElementById("ss-content");
+      if(!h||!tgt){tgt.innerHTML='<p class="text-danger">Content temporarily unavailable.</p>';return;}
+      var frag=document.createDocumentFragment(), node=h;
+      while(node && (node===h || !/^H[1-3]$/.test(node.tagName))){
+        frag.appendChild(node.cloneNode(true));
+        node=node.nextElementSibling;
+      }
+      tgt.appendChild(frag);
+    })
+    .catch(function(){
+      var t=document.getElementById("ss-content");
+      if(t) t.innerHTML='<p class="text-danger">Content temporarily unavailable.</p>';
+    });
+})();
+</script>
+
+<script id="ss-section-loader">
+(function(){
   var wanted="About";  // Services | Process | About | Contact
   fetch("/index.html?v="+Date.now())
     .then(function(r){return r.text()})
