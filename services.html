@@ -46,5 +46,19 @@
   </div>
 </nav>
 <main id="content" class="container py-5"> <h1 class="visually-hidden">Sharpen Sweet</h1></main> <footer class="bg-dark text-light mt-auto site-footer"> <div class="container py-4"> <div class="row g-3 align-items-center"> <div class="col-md"><a class="navbar-brand text-light" href="/">Sharpen Sweet</a> <div class="small opacity-75">© 2025 Sharpen Sweet. All rights reserved.</div> </div> <div class="col-md-auto"> <ul class="nav"> <li class="nav-item"><a class="nav-link px-2 text-light" href="/services.html">Services</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/process.html">Process</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/about.html">About</a></li> <li class="nav-item"><a class="nav-link px-2 text-light" href="/contact.html">Contact</a></li> </ul> </div> </div> </div> </footer> <script src="/assets/bootstrap.bundle.min.js?v=1759862829" crossorigin="anonymous"></script>
+<script id="nav-active-js">
+document.addEventListener('DOMContentLoaded', () => {
+  const links = document.querySelectorAll('.navbar-nav .nav-link');
+  const current = location.pathname + (location.hash || '');
+  links.forEach(a => {
+    const href = a.getAttribute('href');
+    const isExact = href === current;
+    const isHome  = href === '/' && location.pathname === '/';
+    const isPricing = href === '/#pricing' && location.hash === '#pricing';
+    a.classList.toggle('active', isExact || isHome || isPricing);
+  });
+});
+
+</script>
 </body>
 </html>
