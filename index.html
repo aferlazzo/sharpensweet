@@ -148,6 +148,16 @@
 <!-- BEGIN: REVIEWS-TOGGLE-CSS -->
 <style>#reviews ul.reviews li.is-hidden{display:none}</style>
 <!-- END: REVIEWS-TOGGLE-CSS -->
+
+<style id="sticky-footer">
+  html, body { height:100%; }
+  body { min-height:100vh; display:flex; flex-direction:column; }
+  /* your main content doesn’t have to be flex; margin-top:auto handles it.
+     But if you DO have a main wrapper, this helps it grow */
+  main, #ss-content, #content, .page-content { flex:1 0 auto; }
+  footer.site-footer { margin-top:auto; }
+</style>
+
 </head>
 <body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="80" tabindex="0">
 <nav class="navbar navbar-dark bg-dark navbar-expand-md sticky-top">
@@ -163,7 +173,7 @@
         <li class="nav-item"><a class="nav-link" href="/pricing.html">Pricing</a></li>
         <li class="nav-item"><a class="nav-link" href="/process.html">Process</a></li>
         <li class="nav-item"><a class="nav-link" href="/about.html">About</a></li>
-  <li class="nav-item"><a class="nav-link" href="/#reviews">Reviews</a></li>
+  <li class="nav-item"><a class="nav-link" href="/reviews.html">Reviews</a></li>
 
         <li class="nav-item"><a class="nav-link" href="/contact.html">Contact</a></li>
       </ul>

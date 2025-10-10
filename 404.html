@@ -14,7 +14,17 @@
     <script src="/cp/javascript/vendors.js"></script>
     <script src="/cp/javascript/main.js"></script>
     <script src="/error_docs/uat.js?v5"></script>
-<link href="/error_docs/app.css?3275a11af93002eb5427" rel="stylesheet"></head>
+<link href="/error_docs/app.css?3275a11af93002eb5427" rel="stylesheet">
+<style id="sticky-footer">
+  html, body { height:100%; }
+  body { min-height:100vh; display:flex; flex-direction:column; }
+  /* your main content doesn’t have to be flex; margin-top:auto handles it.
+     But if you DO have a main wrapper, this helps it grow */
+  main, #ss-content, #content, .page-content { flex:1 0 auto; }
+  footer.site-footer { margin-top:auto; }
+</style>
+
+</head>
 <body>
 <div id="app"></div>
 <script>window.__INITIAL_DATA__ = {"code":"404","message":"Page Not Found"}</script>
